@@ -17,14 +17,14 @@ public class StugController {
 
     @GetMapping
     public UserStatusDto getUser() {
-        log.info("GET");
+//        log.info("GET");
 
         return new UserStatusDto("Login1", "Ok");
     }
 
     @PostMapping
     public ResponseDto postUser(@RequestBody UserDto user) throws InterruptedException {
-        log.info("POST");
+//        log.info("POST");
 
         Thread.sleep(RandomTime.getRandomTime());
         String date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
