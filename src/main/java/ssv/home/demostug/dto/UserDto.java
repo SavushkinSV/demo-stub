@@ -1,20 +1,17 @@
-package ssv.home.demostug.model;
+package ssv.home.demostug.dto;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class User {
+public class UserDto {
 
     private String login;
     private String password;
-    private String status;
 
-    public User(String login, String status) {
+    public UserDto(String login, String password) {
         this.login = login;
-        this.status = status;
+        this.password = password;
     }
-
-
 }
