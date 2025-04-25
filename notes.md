@@ -98,3 +98,7 @@ uint64_t MaxRAM                                   = 137438953472         {pd pro
    uintx SurvivorRatio                            = 8                    {соотношение размеров областей Eden и Survivor}
 ```
 
+Полезные ссылки:
+
+[Java HotSpot VM Options](https://www.oracle.com/java/technologies/javase/vmoptions-jsp.html) \
+[Ускорение Spring REST API на 200%](https://habr.com/ru/companies/maxilect/articles/896240/)
