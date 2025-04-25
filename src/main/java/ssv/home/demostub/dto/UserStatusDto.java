@@ -1,4 +1,4 @@
-package ssv.home.demostug.dto;
+package ssv.home.demostub.dto;
 
 import lombok.Getter;
 import lombok.Setter;

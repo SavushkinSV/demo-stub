@@ -1,4 +1,4 @@
-package ssv.home.demostug;
+package ssv.home.demostub;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

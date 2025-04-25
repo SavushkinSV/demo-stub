@@ -1,11 +1,11 @@
-package ssv.home.demostug.controller;
+package ssv.home.demostub.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ssv.home.demostug.dto.ResponseDto;
-import ssv.home.demostug.dto.UserDto;
-import ssv.home.demostug.dto.UserStatusDto;
-import ssv.home.demostug.util.RandomTime;
+import ssv.home.demostub.dto.ResponseDto;
+import ssv.home.demostub.dto.UserDto;
+import ssv.home.demostub.dto.UserStatusDto;
+import ssv.home.demostub.util.RandomTime;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

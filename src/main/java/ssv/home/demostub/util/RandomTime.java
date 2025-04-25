@@ -1,4 +1,4 @@
-package ssv.home.demostug.util;
+package ssv.home.demostub.util;
 
 import java.util.Random;
 

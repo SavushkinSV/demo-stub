@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>ssv.home</groupId>
-    <artifactId>demo-stug</artifactId>
+    <artifactId>demo-stub</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>demo-stug</name>
-    <description>demo-stug</description>
+    <name>demo-stub</name>
+    <description>demo-stub</description>
     <url/>
     <licenses>
         <license/>

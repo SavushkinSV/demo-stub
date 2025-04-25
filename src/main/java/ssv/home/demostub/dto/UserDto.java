@@ -1,18 +1,17 @@
-package ssv.home.demostug.dto;
+package ssv.home.demostub.dto;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class ResponseDto {
+public class UserDto {
+
     private String login;
     private String password;
-    private String date;
 
-    public ResponseDto(String login, String password, String date) {
+    public UserDto(String login, String password) {
         this.login = login;
         this.password = password;
-        this.date = date;
     }
 }
