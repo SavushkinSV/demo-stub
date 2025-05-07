@@ -108,7 +108,7 @@ uint64_t MaxRAM                                   = 137438953472         {pd pro
 
 ### 2.1
 
-Для валидации POST запроса добавил зависимость в файл `pom.xml`
+Для валидации данных добавим зависимость в файл `pom.xml`
 
 ```xml
      <dependency>
@@ -118,7 +118,50 @@ uint64_t MaxRAM                                   = 137438953472         {pd pro
      </dependency>
 ```
 
+Для валидации данных, переданных в теле запроса, добавим аннотации к полям сущности `LoginDto`:
+
+```java
+public class LoginDto {
+
+   @NotBlank
+   private String login;
+
+   @NotNull
+   @Pattern(regexp = ".{8,}")
+   private String password;
+
+   private String date;
+}
+```
+
+Поле `login` не должно быть пустым или равным null. Поле `password` не должно быть равным null и должно содержать 8 или более символов.
+
+
+Чтобы передать объект в валидатор, достаточно добавить аннотацию `@Valid` к параметру `dto`. Выполнение метода контроллера начнется только после успешного прохождения всех проверок:
+
+```java
+@RestController
+@RequestMapping("/user")
+public class StubController {
+
+   @PostMapping()
+   public ResponseEntity<?> postUser(@Valid @RequestBody LoginDto dto) {
+      try {
+         Thread.sleep(getDelayTime());
+      } catch (InterruptedException e) {
+         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+      String currentDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+      dto.setDate(currentDate);
+
+      return new ResponseEntity<>(dto, HttpStatus.OK);
+   }
+    
+}
+```
+
 Полезные ссылки:
 
 [Java HotSpot VM Options](https://www.oracle.com/java/technologies/javase/vmoptions-jsp.html) \
-[Ускорение Spring REST API на 200%](https://habr.com/ru/companies/maxilect/articles/896240/)
+[Ускорение Spring REST API на 200%](https://habr.com/ru/companies/maxilect/articles/896240/) \
+[Валидация данных в Spring Boot](https://struchkov.dev/blog/ru/spring-boot-validation/)

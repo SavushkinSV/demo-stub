@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class UserStatusDto {
+public class LoginStatusDto {
 
     private String login;
 
