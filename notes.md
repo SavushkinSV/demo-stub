@@ -104,6 +104,20 @@ uint64_t MaxRAM                                   = 137438953472         {pd pro
    uintx SurvivorRatio                            = 8                    {соотношение размеров областей Eden и Survivor}
 ```
 
+## Part 2
+
+### 2.1
+
+Для валидации POST запроса добавил зависимость в файл `pom.xml`
+
+```xml
+     <dependency>
+         <groupId>org.springframework.boot</groupId>
+         <artifactId>spring-boot-starter-validation</artifactId>
+         <version>${spring.version}</version>
+     </dependency>
+```
+
 Полезные ссылки:
 
 [Java HotSpot VM Options](https://www.oracle.com/java/technologies/javase/vmoptions-jsp.html) \

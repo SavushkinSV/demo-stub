@@ -18,5 +18,4 @@ public class UserDto {
 
     private String date;
 
-
 }
