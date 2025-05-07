@@ -1,16 +1,8 @@
-# Заметки
-
-В ходе выполнения задания возникали следующие проблемы.
-Вначале не знал как в JMeter добавить POST запрос. Проблема решена с помощью приложение Fiddler Classic.
-Сделал POST запрос в Postman. Отловил пакет в Fiddler Classic. Перенес в JMeter настройки в HTTP Request.
-
-
 ### Что выполнил:
 
 - На java написал заглушку. Использовал Spring Framework.
 - Познакомился с приложением Fiddler Classic.
 - Написал коллекцию в Postman с двумя методами GET и POST.
-- B Grafana использовал дашборд <https://grafana.com/grafana/dashboards/21818-jmeter-dashboard-influxdb/>
 
 ### В JMeter
 
@@ -25,7 +17,7 @@
 
 ### Графики тестов
 
-Далее идут графики со ступенчатыми тестами при настройках JVM и Spring по умолчанию. 
+Далее идут графики со ступенчатыми тестами при настройках JVM и Spring по умолчанию.
 
 ![image_01](images/image_01.png "Скриншот с вызовом и выводом скрипта") \
 *Скриншот со ступенчатым тестом без задержек в методах заглушки*
@@ -54,32 +46,32 @@
 В JVM можно использовать различные настройки для управления сборщиком мусора (GC). Вот некоторые из наиболее часто используемых параметров:
 
 1. **Выбор алгоритма GC:**
-   - `-XX:+UseSerialGC` — использование серийного сборщика мусора (подходит для однопоточных приложений).
-   - `-XX:+UseParallelGC` — использование параллельного сборщика мусора (подходит для многопоточных приложений).
-   - `-XX:+UseConcMarkSweepGC` (CMS) — использование сборщика мусора Concurrent Mark-Sweep.
-   - `-XX:+UseG1GC` — использование сборщика мусора Garbage-First (G1), который является более современным и эффективным для большинства приложений.
+    - `-XX:+UseSerialGC` — использование серийного сборщика мусора (подходит для однопоточных приложений).
+    - `-XX:+UseParallelGC` — использование параллельного сборщика мусора (подходит для многопоточных приложений).
+    - `-XX:+UseConcMarkSweepGC` (CMS) — использование сборщика мусора Concurrent Mark-Sweep.
+    - `-XX:+UseG1GC` — использование сборщика мусора Garbage-First (G1), который является более современным и эффективным для большинства приложений.
 
 2. **Настройка размеров памяти:**
-   - `-Xms<size>` — начальный размер кучи. Например, `-Xms1g` установит начальный размер кучи в 1 ГБ.
-   - `-Xmx<size>` — максимальный размер кучи. Например, `-Xmx4g` установит максимальный размер кучи в 4 ГБ.
-   - `-XX:NewSize=<size>` — размер области Eden.
-   - `-XX:MaxNewSize=<size>` — максимальный размер области Eden.
+    - `-Xms<size>` — начальный размер кучи. Например, `-Xms1g` установит начальный размер кучи в 1 ГБ.
+    - `-Xmx<size>` — максимальный размер кучи. Например, `-Xmx4g` установит максимальный размер кучи в 4 ГБ.
+    - `-XX:NewSize=<size>` — размер области Eden.
+    - `-XX:MaxNewSize=<size>` — максимальный размер области Eden.
 
 3. **Настройка параметров GC:**
-   - `-XX:SurvivorRatio=<ratio>` — соотношение размеров областей Eden и Survivor.
-   - `-XX:MaxTenuringThreshold=<threshold>` — максимальное количество повышений уровня перед перемещением объекта в старое поколение.
-   - `-XX:ParallelGCThreads=<N>` — количество потоков, используемых для параллельной сборки мусора в области Eden.
-   - `-XX:ConcGCThreads` — количество потоков, используемых для параллельной сборки мусора в области Survivor.
+    - `-XX:SurvivorRatio=<ratio>` — соотношение размеров областей Eden и Survivor.
+    - `-XX:MaxTenuringThreshold=<threshold>` — максимальное количество повышений уровня перед перемещением объекта в старое поколение.
+    - `-XX:ParallelGCThreads=<N>` — количество потоков, используемых для параллельной сборки мусора в области Eden.
+    - `-XX:ConcGCThreads` — количество потоков, используемых для параллельной сборки мусора в области Survivor.
 
 4. **Включение дополнительных функций:**
-   - `-XX:+PrintGC` — печать информации о сборке мусора.
-   - `-XX:+PrintGCDetails` — более детальная печать информации о сборке мусора.
-   - `-XX:+PrintHeapAtGC` — печать состояния кучи перед и после сборки мусора.
-   - `-XX:+PrintTenuringDistribution` — печать информации о распределении возраста объектов.
+    - `-XX:+PrintGC` — печать информации о сборке мусора.
+    - `-XX:+PrintGCDetails` — более детальная печать информации о сборке мусора.
+    - `-XX:+PrintHeapAtGC` — печать состояния кучи перед и после сборки мусора.
+    - `-XX:+PrintTenuringDistribution` — печать информации о распределении возраста объектов.
 
 5. **Настройки для G1 GC:**
-   - `-XX:MaxGCPauseMillis=<N>` — указание максимальной паузы GC, которую нужно стараться не превышать.
-   - `-XX:InitiatingHeapOccupancyPercent=<N>` — процент заполнения кучи, при достижении которого начинается цикл GC.
+    - `-XX:MaxGCPauseMillis=<N>` — указание максимальной паузы GC, которую нужно стараться не превышать.
+    - `-XX:InitiatingHeapOccupancyPercent=<N>` — процент заполнения кучи, при достижении которого начинается цикл GC.
 
 6. Параметры для настройки времени отклика:
 
@@ -103,65 +95,7 @@ uint64_t MaxRAM                                   = 137438953472         {pd pro
   size_t MaxNewSize                               = 1121976320           {максимальный размер области Eden}
    uintx SurvivorRatio                            = 8                    {соотношение размеров областей Eden и Survivor}
 ```
-
-## Part 2
-
-### 2.1
-
-Для валидации данных добавим зависимость в файл `pom.xml`
-
-```xml
-     <dependency>
-         <groupId>org.springframework.boot</groupId>
-         <artifactId>spring-boot-starter-validation</artifactId>
-         <version>${spring.version}</version>
-     </dependency>
-```
-
-Для валидации данных, переданных в теле запроса, добавим аннотации к полям сущности `LoginDto`:
-
-```java
-public class LoginDto {
-
-   @NotBlank
-   private String login;
-
-   @NotNull
-   @Pattern(regexp = ".{8,}")
-   private String password;
-
-   private String date;
-}
-```
-
-Поле `login` не должно быть пустым или равным null. Поле `password` не должно быть равным null и должно содержать 8 или более символов.
-
-
-Чтобы передать объект в валидатор, достаточно добавить аннотацию `@Valid` к параметру `dto`. Выполнение метода контроллера начнется только после успешного прохождения всех проверок:
-
-```java
-@RestController
-@RequestMapping("/user")
-public class StubController {
-
-   @PostMapping()
-   public ResponseEntity<?> postUser(@Valid @RequestBody LoginDto dto) {
-      try {
-         Thread.sleep(getDelayTime());
-      } catch (InterruptedException e) {
-         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-      }
-      String currentDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-      dto.setDate(currentDate);
-
-      return new ResponseEntity<>(dto, HttpStatus.OK);
-   }
-    
-}
-```
-
 Полезные ссылки:
 
 [Java HotSpot VM Options](https://www.oracle.com/java/technologies/javase/vmoptions-jsp.html) \
-[Ускорение Spring REST API на 200%](https://habr.com/ru/companies/maxilect/articles/896240/) \
-[Валидация данных в Spring Boot](https://struchkov.dev/blog/ru/spring-boot-validation/)
+[Ускорение Spring REST API на 200%](https://habr.com/ru/companies/maxilect/articles/896240/)
