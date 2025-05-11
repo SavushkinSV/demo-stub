@@ -81,6 +81,13 @@ public class StubController {
 ![part_3_04](images/part_3_04.png "Скриншот из Postman с некорректными данными в POST запросе") \
 *Скриншот из Postman с некорректными данными в POST запросе*
 
+### 3.3. Добавить к приложению Jolokia agent
+
+На официальном сайте Jolokia (https://jolokia.org/) скачаем последнюю версию агента.
+Скачанный файл  
+
+
+
 Полезные ссылки:
 
 [Валидация данных в Spring Boot](https://struchkov.dev/blog/ru/spring-boot-validation/)
