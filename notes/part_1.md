@@ -76,7 +76,7 @@
 
 Настраиваем файл конфигурации telegraf командой `sudo nano /etc/telegraf/telegraf.conf`.
 
-```properties
+```ini
 # Configuration for sending metrics to InfluxDB
 [[outputs.influxdb]]
   ## The full HTTP or UDP URL for your InfluxDB instance.

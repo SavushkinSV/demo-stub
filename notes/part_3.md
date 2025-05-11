@@ -100,7 +100,7 @@ public class StubController {
 
 Добавим блок конфигурации для jolokia в файл конфигурации Telegraf по адресу `/etc/telegraf/telegraf.conf`.
 
-```properties
+```ini
 [[inputs.jolokia2_agent]]
 urls = ["http://localhost:8080/jolokia"]
 
