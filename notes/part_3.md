@@ -83,11 +83,75 @@ public class StubController {
 
 ### 3.3. Добавить к приложению Jolokia agent
 
-На официальном сайте Jolokia (https://jolokia.org/) скачаем последнюю версию агента.
-Скачанный файл  
+На официальном сайте Jolokia (https://jolokia.org/) скачаем последнюю версию агента (на текущий момент версия 2.2.9). 
+Скачанный файл поместим в директорию `/lib` проекта.
 
+Теперь запустим приложение вместе с Jolokia agent. Для этого используем команду `java -javaagent:lib/jolokia-agent-jvm-2.2.9.jar -jar target/demo-stub-0.0.1-SNAPSHOT.jar`.
 
+![part_3_05](images/part_3_05.png "Скриншот запуска приложения с Jolokia agent на виртуальной машине") \
+*Скриншот запуска приложения с Jolokia agent на виртуальной машине*
+
+Проверить работу Jolokia agent можно в браузере по адресу `http://127.0.0.1:8778/jolokia`.
+
+![part_3_06](images/part_3_06.png "Скриншот браузера с проверкой работы Jolokia agent") \
+*Скриншот браузера с проверкой работы Jolokia agent*
+
+### 3.4. Настройка Telegraf и Grafana под jolokia
+
+Добавим блок конфигурации для jolokia в файл конфигурации Telegraf по адресу `/etc/telegraf/telegraf.conf`.
+
+```properties
+[[inputs.jolokia2_agent]]
+urls = ["http://localhost:8080/jolokia"]
+
+[[inputs.jolokia2_agent.metric]]
+name  = "java_runtime"
+mbean = "java.lang:type=Runtime"
+paths = ["Uptime"]
+
+[[inputs.jolokia2_agent.metric]]
+name  = "java_memory"
+mbean = "java.lang:type=Memory"
+paths = ["HeapMemoryUsage", "NonHeapMemoryUsage", "ObjectPendingFinalizationCount"]
+
+[[inputs.jolokia2_agent.metric]]
+name     = "java_garbage_collector"
+mbean    = "java.lang:name=*,type=GarbageCollector"
+paths    = ["CollectionTime", "CollectionCount"]
+tag_keys = ["name"]
+
+[[inputs.jolokia2_agent.metric]]
+name  = "java_last_garbage_collection"
+mbean = "java.lang:name=*,type=GarbageCollector"
+paths = ["LastGcInfo"]
+tag_keys = ["name"]
+
+[[inputs.jolokia2_agent.metric]]
+name  = "java_threading"
+mbean = "java.lang:type=Threading"
+paths = ["TotalStartedThreadCount", "ThreadCount", "DaemonThreadCount", "PeakThreadCount"]
+
+[[inputs.jolokia2_agent.metric]]
+name  = "java_class_loading"
+mbean = "java.lang:type=ClassLoading"
+paths = ["LoadedClassCount", "UnloadedClassCount", "TotalLoadedClassCount"]
+
+[[inputs.jolokia2_agent.metric]]
+name     = "java_memory_pool"
+mbean    = "java.lang:name=*,type=MemoryPool"
+paths    = ["Usage", "PeakUsage", "CollectionUsage"]
+tag_keys = ["name"]
+```
+
+С помощью команды `sudo systemctl restart telegraf.service` перезапустим сервис с новыми настройками.
+
+В Grafana добавим новый дашборд <https://grafana.com/grafana/dashboards/8991-jvm-metrics-jolokia-2/> для просмотра метрик JVM.
+
+![part_3_07](images/part_3_07.png "Скриншот визуализации метрик JVM в Grafana") \
+*Скриншот визуализации метрик JVM в Grafana*
 
 Полезные ссылки:
 
-[Валидация данных в Spring Boot](https://struchkov.dev/blog/ru/spring-boot-validation/)
+[Валидация данных в Spring Boot](https://struchkov.dev/blog/ru/spring-boot-validation/) \
+[Jolokia2 Agent Input Plugin](https://github.com/influxdata/telegraf/blob/master/plugins/inputs/jolokia2_agent/README.md) \
+[java.conf](https://github.com/influxdata/telegraf/blob/master/plugins/inputs/jolokia2_agent/examples/java.conf)

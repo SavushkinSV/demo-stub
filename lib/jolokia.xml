@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<jolokia>
-    <agent>
-        <host>localhost</host>
-        <port>8778</port>
-        <protocol>http</protocol>
-    </agent>
-</jolokia>
