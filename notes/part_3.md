@@ -145,7 +145,7 @@ tag_keys = ["name"]
 
 С помощью команды `sudo systemctl restart telegraf.service` перезапустим сервис с новыми настройками.
 
-В Grafana добавим новый дашборд <https://grafana.com/grafana/dashboards/8991-jvm-metrics-jolokia-2/> для просмотра метрик JVM.
+В Grafana добавим новый дашборд https://grafana.com/grafana/dashboards/8991-jvm-metrics-jolokia-2/ для просмотра метрик JVM.
 
 ![part_3_07](images/part_3_07.png "Скриншот визуализации метрик JVM в Grafana") \
 *Скриншот визуализации метрик JVM в Grafana*
