@@ -123,5 +123,4 @@
 ![part_1_05](images/part_1_05.png "Скриншот с настройкой дашборда для telegraf в Grafana") \
 *Скриншот дашборда с метриками из telegraf в Grafana*
 
-B Grafana использовал дашборд <https://grafana.com/grafana/dashboards/21818-jmeter-dashboard-influxdb/>
-
+Для сборки метрик хоста (Windows) использовал дашборд <https://grafana.com/grafana/dashboards/1902-windows-host-overview/>

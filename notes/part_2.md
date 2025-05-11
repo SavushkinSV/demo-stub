@@ -95,6 +95,9 @@ uint64_t MaxRAM                                   = 137438953472         {pd pro
   size_t MaxNewSize                               = 1121976320           {максимальный размер области Eden}
    uintx SurvivorRatio                            = 8                    {соотношение размеров областей Eden и Survivor}
 ```
+
+B Grafana использовал дашборд <https://grafana.com/grafana/dashboards/21818-jmeter-dashboard-influxdb/>
+
 Полезные ссылки:
 
 [Java HotSpot VM Options](https://www.oracle.com/java/technologies/javase/vmoptions-jsp.html) \
