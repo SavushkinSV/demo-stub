@@ -100,7 +100,7 @@
 
 Выбираем на вкладку **Add new connection**. В качестве источника данных выбираем **InfluxDB**.
 
-- Name: influxdb (Ubuntu)
+- Name: influxdb (Ubuntu VM)
 - Query language: InfluxQL
 - URL: http://localhost:8086
 - Timeout: 10
@@ -123,4 +123,5 @@
 
 Полезные ссылки:
 
-[Установка telegraf и передача метрик в InfluxDB](https://www.dmosk.ru/miniinstruktions.php?mini=telegraf-influxdb#influxdb)
+[Установка telegraf и передача метрик в InfluxDB](https://www.dmosk.ru/miniinstruktions.php?mini=telegraf-influxdb#influxdb) \
+[Установка Grafana на Ubuntu](https://help.reg.ru/support/servery-vps/oblachnyye-servery/ustanovka-programmnogo-obespecheniya/ustanovka-grafana-na-ubuntu#0)
