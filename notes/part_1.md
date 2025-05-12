@@ -2,7 +2,7 @@
 
 ## Создание виртуальной машины
 
-В программе Oracle VM VirtualBox создадим виртуальную машину со следующими параметрами:
+В программе **Oracle VM VirtualBox** создадим виртуальную машину со следующими параметрами:
 
 - Имя: Ubuntu
 - Тип: Linux
@@ -31,25 +31,27 @@
 
 Запустим influx CLI командой `influx`.
 
-Перечень команд, которые могут понадобиться при работе с **influxdb**:
+Перечень команд, которые могут понадобиться при работе с **InfluxDb** приведен ниже в таблице.
 
-- `SHOW DATABASES` - показать список баз данных;
-- `SHOW USERS` - показать список пользователей;
-- `CREATE DATABASE telegraf` - создает базу данных telegraf;
-- `DROP DATABASE telegfaf` - удаляет базу данных telegraf;
-- `CREATE USER admin WITH PASSWORD 'passwd' WITH ALL PRIVILEGES` - создает пользователя admin с паролем passwd и правами администратора;
-- `DROP USERS telegraf` - удаляет пользователя telegraf;
-- `USE telegraf` - подключение к базе данных telegraf;
-- `SHOW MEASUREMENTS` - просмотр списка таблиц в базе данных.
+| Команда                                                      | Назначение                                                           |
+|--------------------------------------------------------------|----------------------------------------------------------------------|
+| SHOW DATABASES                                               | Показать список баз данных                                           |
+| SHOW USERS                                                   | Показать список пользователей                                        |
+| CREATE DATABASE telegraf                                     | Создает базу данных telegraf                                         |
+| DROP DATABASE telegfaf                                       | Удаляет базу данных telegraf                                         |
+| CREATE USER admin WITH PASSWORD 'passwd' WITH ALL PRIVILEGES | Создает пользователя admin с паролем passwd и правами администратора |
+| DROP USERS telegraf                                          | Удаляет пользователя telegraf                                        |
+| USE telegraf                                                 | Подключение к базе данных telegraf                                   |
+| SHOW MEASUREMENTS                                            | Просмотр списка таблиц в базе данных                                 |
 
-Создадим базу данных `telegraf` для метрик Telegraf и создадим пользователя `telegraf` с паролем `telegraf`.
+Создадим базу данных `telegraf` для метрик **Telegraf** и создадим пользователя `telegraf` с паролем `telegraf`.
 
 С помощью команд `SHOW DATABASES` и `SHOW USERS` можно проверить наличие баз данных и пользователей соответственно.
 
 ![part_1_03](images/part_1_03.png "Скриншот с настройкой influx CLI") \
 *Скриншот с настройкой influx CLI*
 
-Настраиваем файл конфигурации InfluxDB командой `sudo nano /etc/influxdb/influxdb.conf`.
+Настраиваем файл конфигурации **InfluxDB** командой `sudo nano /etc/influxdb/influxdb.conf`.
 
 ```ini
 [http]
@@ -74,7 +76,7 @@
 
 ``sudo systemctl status telegraf.service``
 
-Настраиваем файл конфигурации telegraf командой `sudo nano /etc/telegraf/telegraf.conf`.
+Настраиваем файл конфигурации **Telegraf** командой `sudo nano /etc/telegraf/telegraf.conf`.
 
 ```ini
 # Configuration for sending metrics to InfluxDB
@@ -92,13 +94,7 @@
   database = "telegraf"
 ```
 
-Рестарт сервиса выполняем командой:
-
-`sudo systemctl restart telegraf.servise influxdb.service`
-
-Полезные ссылки:
-
-[Установка telegraf и передача метрик в InfluxDB](https://www.dmosk.ru/miniinstruktions.php?mini=telegraf-influxdb#influxdb)
+Рестарт сервиса выполняем командой `sudo systemctl restart telegraf.servise influxdb.service`.
 
 ## Настройка Grafana
 
@@ -124,3 +120,7 @@
 *Скриншот дашборда с метриками из telegraf в Grafana*
 
 Для сборки метрик хоста (Windows) использовал дашборд <https://grafana.com/grafana/dashboards/1902-windows-host-overview/>
+
+Полезные ссылки:
+
+[Установка telegraf и передача метрик в InfluxDB](https://www.dmosk.ru/miniinstruktions.php?mini=telegraf-influxdb#influxdb)
