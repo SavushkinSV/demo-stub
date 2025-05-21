@@ -13,12 +13,12 @@ import java.util.Random;
 
 @RestController
 @RequestMapping("/user")
-public class StubController {
+public class UserController {
 
     private static final Random random = new Random();
 
     @GetMapping()
-    public ResponseEntity<?> getLogin() {
+    public ResponseEntity<?> status() {
         try {
             Thread.sleep(getDelayTime());
         } catch (InterruptedException e) {
@@ -30,7 +30,7 @@ public class StubController {
     }
 
     @PostMapping()
-    public ResponseEntity<?> postUser(@Valid @RequestBody LoginDto dto) {
+    public ResponseEntity<?> add(@Valid @RequestBody LoginDto dto) {
         try {
             Thread.sleep(getDelayTime());
         } catch (InterruptedException e) {
