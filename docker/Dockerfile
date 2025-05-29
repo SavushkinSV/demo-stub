@@ -1,4 +1,4 @@
-FROM openjdk:11-jdk-slim
+FROM openjdk:17-jdk-slim
 
 RUN apt-get update && \
     apt-get install -y wget && \
@@ -9,11 +9,9 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends maven && \
     rm -rf /var/lib/apt/lists/*
 
+RUN git clone https://github.com/SavushkinSV/demo-stub.git /app
+
 WORKDIR /app
-
-RUN git clone https://github.com/SavushkinSV/demo-stub.git .
-
-WORKDIR /app/demo-stub
 
 RUN mvn clean install
 
