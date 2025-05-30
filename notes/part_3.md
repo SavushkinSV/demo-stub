@@ -85,7 +85,7 @@ public class StubController {
 
 ### 3.3. Добавить к приложению Jolokia agent
 
-На официальном сайте Jolokia (https://jolokia.org/) скачаем последнюю версию агента (на текущий момент версия 2.2.9). 
+На официальном сайте Jolokia (https://jolokia.org/) скачаем последнюю версию агента (на текущий момент версия 2.2.9).
 Скачанный файл поместим в директорию `/lib` проекта.
 
 Теперь запустим приложение вместе с **Jolokia agent**. Для этого используем команду `java -javaagent:lib/jolokia-agent-jvm-2.2.9.jar -jar target/demo-stub-0.0.1-SNAPSHOT.jar`.
