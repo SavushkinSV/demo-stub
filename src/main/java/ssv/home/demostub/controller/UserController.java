@@ -19,31 +19,25 @@ public class UserController {
 
     @GetMapping()
     public ResponseEntity<?> status() {
-        try {
-            Thread.sleep(getDelayTime());
-        } catch (InterruptedException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        getDelay();
         LoginStatusDto dto = new LoginStatusDto("Login1", "Ok");
-
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @PostMapping()
     public ResponseEntity<?> add(@Valid @RequestBody LoginDto dto) {
-        try {
-            Thread.sleep(getDelayTime());
-        } catch (InterruptedException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        getDelay();
         String currentDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         dto.setDate(currentDate);
-
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
-    private static int getDelayTime() {
-        return 1000 + random.nextInt(1000);
+    private static void getDelay() {
+        try {
+            Thread.sleep(1000 + random.nextInt(1000));
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
