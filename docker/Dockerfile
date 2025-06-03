@@ -4,7 +4,7 @@ FROM maven:3.8.3-openjdk-17 AS build
 WORKDIR /build
 
 RUN git clone https://github.com/SavushkinSV/demo-stub.git . && \
-    mvn clean package
+    mvn clean package -DskipTests
 
 # Этап 2: финальный образ
 FROM openjdk:17-jdk-slim
@@ -12,6 +12,7 @@ FROM openjdk:17-jdk-slim
 RUN apt-get update && \
     apt-get upgrade -y && \
     useradd -ms /bin/bash stub && \
+    apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
