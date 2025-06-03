@@ -1,22 +1,31 @@
+# Этап 1: сборка проекта
+FROM maven:3.8.3-openjdk-17 AS build
+
+WORKDIR /build
+
+RUN git clone https://github.com/SavushkinSV/demo-stub.git . && \
+    mvn clean package
+
+# Этап 2: финальный образ
 FROM openjdk:17-jdk-slim
 
 RUN apt-get update && \
-    apt-get install -y wget && \
-    apt-get install -y git && \
-    apt-get install -y --no-install-recommends maven && \
+    apt-get upgrade -y && \
     useradd -ms /bin/bash stub && \
     rm -rf /var/lib/apt/lists/*
-    
-HEALTHCHECK --interval=5s --timeout=10s --retries=3 \
-    CMD curl -f http://localhost/ || exit 1
 
 WORKDIR /app
 
-RUN git clone https://github.com/SavushkinSV/demo-stub.git /app && \
-    mvn clean install
+# Копируем собранный артефакт из первого этапа
+COPY --from=build /build/target/demo-stub-0.0.1-SNAPSHOT.jar ./demo-stub.jar
+# Копируем jar-файл jolokia из первого этапа
+COPY --from=build /build/lib/jolokia-agent-jvm-2.2.9.jar ./jolokia-agent-jvm-2.2.9.jar
+
+HEALTHCHECK --interval=5s --timeout=10s --retries=3 \
+    CMD curl -f http://localhost/ || exit 1
 
 EXPOSE 8080 8778
 
 USER stub
 
-CMD ["java", "-javaagent:lib/jolokia-agent-jvm-2.2.9.jar=port=8778,host=0.0.0.0", "-jar", "target/demo-stub-0.0.1-SNAPSHOT.jar"]
+CMD ["java", "-javaagent:jolokia-agent-jvm-2.2.9.jar=port=8778,host=0.0.0.0", "-jar", "demo-stub.jar"]

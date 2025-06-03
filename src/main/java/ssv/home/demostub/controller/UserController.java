@@ -18,14 +18,14 @@ public class UserController {
     private static final Random random = new Random();
 
     @GetMapping()
-    public ResponseEntity<?> status() {
+    public ResponseEntity<?> get() {
         getDelay();
         LoginStatusDto dto = new LoginStatusDto("Login1", "Ok");
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @PostMapping()
-    public ResponseEntity<?> add(@Valid @RequestBody LoginDto dto) {
+    public ResponseEntity<?> post(@Valid @RequestBody LoginDto dto) {
         getDelay();
         String currentDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         dto.setDate(currentDate);
@@ -39,5 +39,4 @@ public class UserController {
             throw new RuntimeException(e);
         }
     }
-
 }

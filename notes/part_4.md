@@ -5,21 +5,20 @@
 Создадим в директории `./docker/` проекта файл [Dockerfile](../docker/Dockerfile) для создания образа. Содержимое файла приведено ниже.
 
 ```dockerfile
+FROM maven:3.8.3-openjdk-17 AS build
+WORKDIR /build
+RUN git clone https://github.com/SavushkinSV/demo-stub.git . && \
+    mvn clean package
 FROM openjdk:17-jdk-slim
-RUN apt-get update && \
-    apt-get install -y wget && \
-    apt-get install -y git && \
-    apt-get install -y --no-install-recommends maven && \
-    useradd -ms /bin/bash stub && \
-    rm -rf /var/lib/apt/lists/*    
+RUN useradd -ms /bin/bash stub
+WORKDIR /app
+COPY --from=build /build/target/demo-stub-0.0.1-SNAPSHOT.jar ./demo-stub.jar
+COPY --from=build /build/lib/jolokia-agent-jvm-2.2.9.jar ./jolokia-agent-jvm-2.2.9.jar
 HEALTHCHECK --interval=5s --timeout=10s --retries=3 \
     CMD curl -f http://localhost/ || exit 1
-WORKDIR /app
-RUN git clone https://github.com/SavushkinSV/demo-stub.git /app && \
-    mvn clean install
 EXPOSE 8080 8778
 USER stub
-CMD ["java", "-javaagent:lib/jolokia-agent-jvm-2.2.9.jar=port=8778,host=0.0.0.0", "-jar", "target/demo-stub-0.0.1-SNAPSHOT.jar"]
+CMD ["java", "-javaagent:jolokia-agent-jvm-2.2.9.jar=port=8778,host=0.0.0.0", "-jar", "demo-stub.jar"]
 ```
 
 Соберём написанный докер-образ с помощью команды `docker build -t demo-stub:part4 .`, при этом укажем имя образа **demo-stub** и тег **part4**. С помощью команды `docker images` выведем в консоль все образы **Docker**.
