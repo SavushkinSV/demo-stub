@@ -1,127 +1,104 @@
-# Part 1 Виртуальная машина
+# Part 1 Заглушка
 
-## Создание виртуальной машины
+- На java написал заглушку. Использовал Spring Framework.
+- Познакомился с приложением Fiddler Classic.
+- Написал коллекцию в Postman с двумя методами GET и POST.
 
-В программе **Oracle VM VirtualBox** создадим виртуальную машину со следующими параметрами:
+## В JMeter
 
-- Имя: Ubuntu
-- Тип: Linux
-- Процессор: 2 ядра
-- Жесткий диск: 16 ГБ
-- Сеть:
-  - Адаптер 1:
-    - Тип подключения: NAT
-    - Проброс портов TCP 22 <-> 22, TCP 8086 <-> 8086
-  - Адаптер 2:
-    - Тип подключения: Сетевой мост
+- Использовал JSON Assertion для проверки ответа на GET и POST запросы.
+- Отправка метрик осуществляется с помощью **Backend listener** в **InfluxDB**.
 
-![part_1_01](images/part_1_01.png "Скриншот c настройками сети в виртуальной машине") \
-*Скриншот с настройками сети в виртуальной машине*
+**Spring** поддерживает три веб-сервера: tomcat, jetty и undertow. По умолчанию работает tomcat.
+В **JVM** по умолчанию запускается сборщик мусора G1. С помощью параметра `-Xlog:gc` можно вывести логи, связанные с работой сборщика мусора. Для более тонкой настройки можно использовать различные параметры, например:
 
-![part_1_02](images/part_1_02.png "Скриншот c настройками пробросом портов виртуальной машине") \
-*Скриншот с настройками пробросом портов виртуальной машине*
+- `-Xlog:gc:file=gc.log` — направляет логи в файл gc.log.
+- `-Xlog:gc=debug` — устанавливает уровень детализации логов на debug.
 
-## Установка и настройка InfluxDB
+## Графики тестов
 
-Необходимо установить **influxdb** и **influxdb client**. Для этого используем команду `sudo apt install influxdb influxdb-client`.
+Далее идут графики со ступенчатыми тестами при настройках JVM и Spring по умолчанию.
 
-Разблокировать службу **influxdb** можно с помощью команды `sudo systemctl unmask influxdb.service`.
-Запустим службу **influxdb** командой `sudo systemctl start influxdb.service`. 
-Командой `sudo systemctl status influxdb.service` проверим статус демона.
+![part_1_1](images/part_1_1.png "Скриншот с вызовом и выводом скрипта") \
+*Скриншот со ступенчатым тестом без задержек в методах заглушки*
 
-Запустим influx CLI командой `influx`.
+![part_1_2](images/part_1_2.png "Скриншот со ступенчатым тестом с задержкой в 2 секунды на метод POST") \
+*Скриншот со ступенчатым тестом с задержкой в 1-2 секунды на метод POST*
 
-Перечень команд, которые могут понадобиться при работе с **InfluxDb** приведен ниже в таблице.
+![part_1_3](images/part_1_3.png "Скриншот со ступенчатым тестом с Constant Timer в 0,3 секунды на метод GET") \
+*Скриншот со ступенчатым тестом с Constant Timer в 0,3 секунды на метод GET*
 
-| Команда                                                      | Назначение                                                           |
-|--------------------------------------------------------------|----------------------------------------------------------------------|
-| SHOW DATABASES                                               | Показать список баз данных                                           |
-| SHOW USERS                                                   | Показать список пользователей                                        |
-| CREATE DATABASE telegraf                                     | Создает базу данных telegraf                                         |
-| DROP DATABASE telegfaf                                       | Удаляет базу данных telegraf                                         |
-| CREATE USER admin WITH PASSWORD 'passwd' WITH ALL PRIVILEGES | Создает пользователя admin с паролем passwd и правами администратора |
-| DROP USERS telegraf                                          | Удаляет пользователя telegraf                                        |
-| USE telegraf                                                 | Подключение к базе данных telegraf                                   |
-| SHOW MEASUREMENTS                                            | Просмотр списка таблиц в базе данных                                 |
+![part_1_4](images/part_1_4.png "Скриншот со ступенчатым тестом с Constant Timer в 2 секунды на метод POST") \
+*Скриншот со ступенчатым тестом с Constant Timer в 2 секунды на метод POST*
 
-Создадим базу данных `telegraf` для метрик **Telegraf** и создадим пользователя `telegraf` с паролем `telegraf`.
+Изменим сервер в Spring с **tomcat** на **undertow**. \
+Изменение сервера положительно сказалось на производительности заглушки. На уровне 350 виртуальных пользователя время отклика составило 4.6 секунды. Ошибок практически не зафиксировано.
 
-С помощью команд `SHOW DATABASES` и `SHOW USERS` можно проверить наличие баз данных и пользователей соответственно.
+![part_1_5](images/part_1_5.png "Скриншот со ступенчатым тестом с Constant Timer в 2 секунды на метод POST") \
+*Скриншот со ступенчатым тестом с Constant Timer в 2 секунды на метод POST и сервером undertow*
 
-![part_1_03](images/part_1_03.png "Скриншот с настройкой influx CLI") \
-*Скриншот с настройкой influx CLI*
+![part_1_6](images/part_1_6.png "Скриншот со ступенчатым тестом с задержкой в 1-2 секунды на метод POST и Serial GC") \
+*Скриншот со ступенчатым тестом с задержкой в 1-2 секунды на метод POST и Serial GC*
 
-Настраиваем файл конфигурации **InfluxDB** командой `sudo nano /etc/influxdb/influxdb.conf`.
+![part_1_7](images/part_1_7.png "Скриншот со ступенчатым тестом с задержкой в 1-2 секунды на метод POST и -Xmx40m -XX:MaxNewSize=10m") \
+*Скриншот со ступенчатым тестом с задержкой в 1-2 секунды на метод POST и -Xmx40m -XX:MaxNewSize=10m*
 
-```ini
-[http]
-  # Determines whether HTTP endpoint is enabled.
-  enabled = true
+В JVM можно использовать различные настройки для управления сборщиком мусора (GC). Вот некоторые из наиболее часто используемых параметров:
 
-  # The bind address used by the HTTP service.
-  bind-address = "127.0.0.1:8086"
+1. **Выбор алгоритма GC:**
+    - `-XX:+UseSerialGC` — использование серийного сборщика мусора (подходит для однопоточных приложений).
+    - `-XX:+UseParallelGC` — использование параллельного сборщика мусора (подходит для многопоточных приложений).
+    - `-XX:+UseConcMarkSweepGC` (CMS) — использование сборщика мусора Concurrent Mark-Sweep.
+    - `-XX:+UseG1GC` — использование сборщика мусора Garbage-First (G1), который является более современным и эффективным для большинства приложений.
+
+2. **Настройка размеров памяти:**
+    - `-Xms<size>` — начальный размер кучи. Например, `-Xms1g` установит начальный размер кучи в 1 ГБ.
+    - `-Xmx<size>` — максимальный размер кучи. Например, `-Xmx4g` установит максимальный размер кучи в 4 ГБ.
+    - `-XX:NewSize=<size>` — размер области Eden.
+    - `-XX:MaxNewSize=<size>` — максимальный размер области Eden.
+
+3. **Настройка параметров GC:**
+    - `-XX:SurvivorRatio=<ratio>` — соотношение размеров областей Eden и Survivor.
+    - `-XX:MaxTenuringThreshold=<threshold>` — максимальное количество повышений уровня перед перемещением объекта в старое поколение.
+    - `-XX:ParallelGCThreads=<N>` — количество потоков, используемых для параллельной сборки мусора в области Eden.
+    - `-XX:ConcGCThreads` — количество потоков, используемых для параллельной сборки мусора в области Survivor.
+
+4. **Включение дополнительных функций:**
+    - `-XX:+PrintGC` — печать информации о сборке мусора.
+    - `-XX:+PrintGCDetails` — более детальная печать информации о сборке мусора.
+    - `-XX:+PrintHeapAtGC` — печать состояния кучи перед и после сборки мусора.
+    - `-XX:+PrintTenuringDistribution` — печать информации о распределении возраста объектов.
+
+5. **Настройки для G1 GC:**
+    - `-XX:MaxGCPauseMillis=<N>` — указание максимальной паузы GC, которую нужно стараться не превышать.
+    - `-XX:InitiatingHeapOccupancyPercent=<N>` — процент заполнения кучи, при достижении которого начинается цикл GC.
+
+6. Параметры для настройки времени отклика:
+
+    - `-XX:MaxGCPauseMillis` — максимальное время паузы для сборки мусора.
+    - `-XX:InitiatingHeapOccupancyPercent` — процент заполнения кучи, при котором начинается сборка мусора в старом поколении.
+
+## Настройки по умолчанию JVM
+
+```text
+uint64_t MaxRAM                                   = 137438953472         {pd product} {default}
+  size_t MetaspaceSize                            = 22020096             {минимальный размер Metaspace}
+  size_t MaxMetaspaceSize                         = 18446744073709551615 {максимальный размер Metaspace}
+  size_t MinHeapSize                              = 8388608              {минимальный размер кучи}
+  size_t MaxHeapSize                              = 1870659584           {максимальный размер кучи}
+    bool UseG1GC                                  = true                 {используется G1}
+    uint InitiatingHeapOccupancyPercent           = 45                   {процент заполнения кучи}
+   uintx MaxGCPauseMillis                         = 200                  {максимальное время паузы для сборки мусора}
+    uint ConcGCThreads                            = 1                    {количество потоков для сборки в Survivor}
+    uint ParallelGCThreads                        = 4                    {количество потоков для сборки в Eden}
+  size_t NewSize                                  = 1363144              {размер области Eden}
+  size_t MaxNewSize                               = 1121976320           {максимальный размер области Eden}
+   uintx SurvivorRatio                            = 8                    {соотношение размеров областей Eden и Survivor}
 ```
 
-## Установка и настройка Telegraf
-
-Скачиваем пакет установки (версия может отличаться):
-
-``wget https://dl.influxdata.com/telegraf/releases/telegraf_1.34.1-1_amd64.deb``
-
-Устанавливаем пакет:
-
-``sudo dpkg -i telegraf_1.34.1-1_amd64.deb``
-
-Проверяем статус демона telegraf:
-
-``sudo systemctl status telegraf.service``
-
-Настраиваем файл конфигурации **Telegraf** командой `sudo nano /etc/telegraf/telegraf.conf`.
-
-```ini
-# Configuration for sending metrics to InfluxDB
-[[outputs.influxdb]]
-  ## The full HTTP or UDP URL for your InfluxDB instance.
-  ##
-  ## Multiple URLs can be specified for a single cluster, only ONE of the
-  ## urls will be written to each interval.
-  # urls = ["unix:///var/run/influxdb.sock"]
-  # urls = ["udp://127.0.0.1:8089"]
-  urls = ["http://127.0.0.1:8086"]
-
-  ## The target database for metrics; will be created as needed.
-  ## For UDP url endpoint database needs to be configured on server side.
-  database = "telegraf"
-```
-
-Рестарт сервиса выполняем командой `sudo systemctl restart telegraf.servise influxdb.service`.
-
-## Настройка Grafana
-
-Выбираем на вкладку **Add new connection**. В качестве источника данных выбираем **InfluxDB**.
-
-- Name: influxdb (Ubuntu VM)
-- Query language: InfluxQL
-- URL: http://localhost:8086
-- Timeout: 10
-- Database: telegraf
-- User: telegraf
-- Password: telegraf
-- HTTP Method: GET
-
-Сохраняем и проверяем соединение.
-
-![part_1_04](images/part_1_04.png "Скриншот с настройкой соединения в Grafana") \
-*Скриншот с настройкой соединения в Grafana*
-
-Переходим на вкладку **Dashboards**. Импортируем новый дашборд. Использовал дашборд для метрик из telegraf <https://grafana.com/grafana/dashboards/5955-telegraf-system-metrics/>
-
-![part_1_05](images/part_1_05.png "Скриншот с настройкой дашборда для telegraf в Grafana") \
-*Скриншот дашборда с метриками из telegraf в Grafana*
-
-Для сборки метрик хоста (Windows) использовал дашборд <https://grafana.com/grafana/dashboards/1902-windows-host-overview/>
+B Grafana использовал дашборд <https://grafana.com/grafana/dashboards/21818-jmeter-dashboard-influxdb/>
 
 Полезные ссылки:
 
-[Установка telegraf и передача метрик в InfluxDB](https://www.dmosk.ru/miniinstruktions.php?mini=telegraf-influxdb#influxdb) \
-[Установка Grafana на Ubuntu](https://help.reg.ru/support/servery-vps/oblachnyye-servery/ustanovka-programmnogo-obespecheniya/ustanovka-grafana-na-ubuntu#0)
+[Java HotSpot VM Options](https://www.oracle.com/java/technologies/javase/vmoptions-jsp.html) \
+[Ускорение Spring REST API на 200%](https://habr.com/ru/companies/maxilect/articles/896240/)

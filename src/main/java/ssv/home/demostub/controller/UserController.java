@@ -34,7 +34,7 @@ public class UserController {
 
     private static void getDelay() {
         try {
-            Thread.sleep(1000 + random.nextInt(1000));
+            Thread.sleep(1000 + (long) random.nextInt(1000));
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }

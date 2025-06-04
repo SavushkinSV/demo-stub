@@ -1,104 +1,186 @@
-# Part 2 Заглушка
+# Part 2 Метрики JVM
 
-- На java написал заглушку. Использовал Spring Framework.
-- Познакомился с приложением Fiddler Classic.
-- Написал коллекцию в Postman с двумя методами GET и POST.
+## Обработка исключений и валидация
 
-### В JMeter
+Для валидации данных добавим зависимость в файл `pom.xml`.
 
-- Использовал JSON Assertion для проверки ответа на GET и POST запросы.
-- Отправка метрик осуществляется с помощью **Backend listener** в **InfluxDB**.
-
-**Spring** поддерживает три веб-сервера: tomcat, jetty и undertow. По умолчанию работает tomcat.
-В **JVM** по умолчанию запускается сборщик мусора G1. С помощью параметра `-Xlog:gc` можно вывести логи, связанные с работой сборщика мусора. Для более тонкой настройки можно использовать различные параметры, например:
-
-- `-Xlog:gc:file=gc.log` — направляет логи в файл gc.log.
-- `-Xlog:gc=debug` — устанавливает уровень детализации логов на debug.
-
-### Графики тестов
-
-Далее идут графики со ступенчатыми тестами при настройках JVM и Spring по умолчанию.
-
-![image_01](images/image_01.png "Скриншот с вызовом и выводом скрипта") \
-*Скриншот со ступенчатым тестом без задержек в методах заглушки*
-
-![image_02](images/image_02.png "Скриншот со ступенчатым тестом с задержкой в 2 секунды на метод POST") \
-*Скриншот со ступенчатым тестом с задержкой в 1-2 секунды на метод POST*
-
-![image_03](images/image_03.png "Скриншот со ступенчатым тестом с Constant Timer в 0,3 секунды на метод GET") \
-*Скриншот со ступенчатым тестом с Constant Timer в 0,3 секунды на метод GET*
-
-![image_04](images/image_04.png "Скриншот со ступенчатым тестом с Constant Timer в 2 секунды на метод POST") \
-*Скриншот со ступенчатым тестом с Constant Timer в 2 секунды на метод POST*
-
-Изменим сервер в Spring с **tomcat** на **undertow**. \
-Изменение сервера положительно сказалось на производительности заглушки. На уровне 350 виртуальных пользователя время отклика составило 4.6 секунды. Ошибок практически не зафиксировано.
-
-![image_05](images/image_05.png "Скриншот со ступенчатым тестом с Constant Timer в 2 секунды на метод POST") \
-*Скриншот со ступенчатым тестом с Constant Timer в 2 секунды на метод POST и сервером undertow*
-
-![image_06](images/image_06.png "Скриншот со ступенчатым тестом с задержкой в 1-2 секунды на метод POST и Serial GC") \
-*Скриншот со ступенчатым тестом с задержкой в 1-2 секунды на метод POST и Serial GC*
-
-![image_07](images/image_07.png "Скриншот со ступенчатым тестом с задержкой в 1-2 секунды на метод POST и -Xmx40m -XX:MaxNewSize=10m") \
-*Скриншот со ступенчатым тестом с задержкой в 1-2 секунды на метод POST и -Xmx40m -XX:MaxNewSize=10m*
-
-В JVM можно использовать различные настройки для управления сборщиком мусора (GC). Вот некоторые из наиболее часто используемых параметров:
-
-1. **Выбор алгоритма GC:**
-    - `-XX:+UseSerialGC` — использование серийного сборщика мусора (подходит для однопоточных приложений).
-    - `-XX:+UseParallelGC` — использование параллельного сборщика мусора (подходит для многопоточных приложений).
-    - `-XX:+UseConcMarkSweepGC` (CMS) — использование сборщика мусора Concurrent Mark-Sweep.
-    - `-XX:+UseG1GC` — использование сборщика мусора Garbage-First (G1), который является более современным и эффективным для большинства приложений.
-
-2. **Настройка размеров памяти:**
-    - `-Xms<size>` — начальный размер кучи. Например, `-Xms1g` установит начальный размер кучи в 1 ГБ.
-    - `-Xmx<size>` — максимальный размер кучи. Например, `-Xmx4g` установит максимальный размер кучи в 4 ГБ.
-    - `-XX:NewSize=<size>` — размер области Eden.
-    - `-XX:MaxNewSize=<size>` — максимальный размер области Eden.
-
-3. **Настройка параметров GC:**
-    - `-XX:SurvivorRatio=<ratio>` — соотношение размеров областей Eden и Survivor.
-    - `-XX:MaxTenuringThreshold=<threshold>` — максимальное количество повышений уровня перед перемещением объекта в старое поколение.
-    - `-XX:ParallelGCThreads=<N>` — количество потоков, используемых для параллельной сборки мусора в области Eden.
-    - `-XX:ConcGCThreads` — количество потоков, используемых для параллельной сборки мусора в области Survivor.
-
-4. **Включение дополнительных функций:**
-    - `-XX:+PrintGC` — печать информации о сборке мусора.
-    - `-XX:+PrintGCDetails` — более детальная печать информации о сборке мусора.
-    - `-XX:+PrintHeapAtGC` — печать состояния кучи перед и после сборки мусора.
-    - `-XX:+PrintTenuringDistribution` — печать информации о распределении возраста объектов.
-
-5. **Настройки для G1 GC:**
-    - `-XX:MaxGCPauseMillis=<N>` — указание максимальной паузы GC, которую нужно стараться не превышать.
-    - `-XX:InitiatingHeapOccupancyPercent=<N>` — процент заполнения кучи, при достижении которого начинается цикл GC.
-
-6. Параметры для настройки времени отклика:
-
-    - `-XX:MaxGCPauseMillis` — максимальное время паузы для сборки мусора.
-    - `-XX:InitiatingHeapOccupancyPercent` — процент заполнения кучи, при котором начинается сборка мусора в старом поколении.
-
-### Настройки по умолчанию JVM
-
-```text
-uint64_t MaxRAM                                   = 137438953472         {pd product} {default}
-  size_t MetaspaceSize                            = 22020096             {минимальный размер Metaspace}
-  size_t MaxMetaspaceSize                         = 18446744073709551615 {максимальный размер Metaspace}
-  size_t MinHeapSize                              = 8388608              {минимальный размер кучи}
-  size_t MaxHeapSize                              = 1870659584           {максимальный размер кучи}
-    bool UseG1GC                                  = true                 {используется G1}
-    uint InitiatingHeapOccupancyPercent           = 45                   {процент заполнения кучи}
-   uintx MaxGCPauseMillis                         = 200                  {максимальное время паузы для сборки мусора}
-    uint ConcGCThreads                            = 1                    {количество потоков для сборки в Survivor}
-    uint ParallelGCThreads                        = 4                    {количество потоков для сборки в Eden}
-  size_t NewSize                                  = 1363144              {размер области Eden}
-  size_t MaxNewSize                               = 1121976320           {максимальный размер области Eden}
-   uintx SurvivorRatio                            = 8                    {соотношение размеров областей Eden и Survivor}
+```xml
+     <dependency>
+         <groupId>org.springframework.boot</groupId>
+         <artifactId>spring-boot-starter-validation</artifactId>
+         <version>${spring.version}</version>
+     </dependency>
 ```
 
-B Grafana использовал дашборд <https://grafana.com/grafana/dashboards/21818-jmeter-dashboard-influxdb/>
+Для валидации данных, переданных в теле запроса, добавим аннотации к полям сущности `LoginDto`:
+
+```java
+public class LoginDto {
+
+   @NotBlank
+   private String login;
+
+   @NotNull
+   @Pattern(regexp = ".{8,}")
+   private String password;
+
+   private String date;
+}
+```
+
+Поле `login` не должно быть пустым или равным null.
+Поле `password` не должно быть равным null и должно содержать 8 или более символов.
+
+Чтобы передать объект в валидатор, достаточно добавить аннотацию `@Valid` к параметру `dto`.
+Выполнение метода контроллера начнется только после успешного прохождения всех проверок.
+
+```java
+@RestController
+@RequestMapping("/user")
+public class StubController {
+
+   @PostMapping()
+   public ResponseEntity<?> post(@Valid @RequestBody LoginDto dto) {
+      try {
+         Thread.sleep(getDelayTime());
+      } catch (InterruptedException e) {
+         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+      String currentDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+      dto.setDate(currentDate);
+
+      return new ResponseEntity<>(dto, HttpStatus.OK);
+   }    
+}
+```
+
+## Развернуть заглушку на виртуальной машине
+
+Если на виртуальной машине не установлен Git, то с помощью команды `sudo apt install git` устанавливаем последнюю версию.
+
+Далее с GitHub клонируем репозиторий командой `git clone https://github.com/SavushkinSV/demo-stub.git`.
+
+![part_2_1](images/part_2_1.png "Скриншот с клонированием проекта из репозитория") \
+*Скриншот с клонированием проекта из репозитория*
+
+Установим последнюю версию Java Runtime Environment (JRE) на виртуальную машину. Используем команду `sudo apt install openjdk-17-jre`.
+Устанавливаем версию JRE в соответствии со свойствами, описанными в файле [pom.xml](../pom.xml).
+
+Командой `./mvnw clean package` производим очистку и сборку проекта с упаковкой его в JAR-файл.
+
+![part_2_2](images/part_2_2.png "Скриншот со сборкой проекта") \
+*Скриншот со сборкой проекта*
+
+После сборки с помощью команды `java -jar ./target/demo-stub-0.0.1-SNAPSHOT.jar` запускаем приложение.
+
+![part_2_3](images/part_2_3.png "Скриншот с запуском проекта на виртуальной машине") \
+*Скриншот с запуском проекта на виртуальной машине*
+
+Проверяем работу приложения при помощи **Postman** и **JMeter** с хоста.
+При этом в настройках сети виртуальной машины делаем проброс порта `8080`.
+
+![part_2_4](images/part_2_4.png "Скриншот из Postman с некорректными данными в POST запросе") \
+*Скриншот из Postman с некорректными данными в POST запросе*
+
+## Добавить к приложению Jolokia agent
+
+На официальном сайте Jolokia <https://jolokia.org/> скачаем последнюю версию агента (на текущий момент версия 2.2.9).
+Скачанный файл поместим в директорию `/lib` проекта.
+
+Теперь запустим приложение вместе с **Jolokia agent**. Для этого используем команду `java -javaagent:lib/jolokia-agent-jvm-2.2.9.jar -jar target/demo-stub-0.0.1-SNAPSHOT.jar`.
+
+![part_2_5](images/part_2_5.png "Скриншот запуска приложения с Jolokia agent на виртуальной машине") \
+*Скриншот запуска приложения с Jolokia agent на виртуальной машине*
+
+Проверяем работу **Jolokia agent** в браузере по адресу `http://127.0.0.1:8778/jolokia`.
+
+![part_2_6](images/part_2_6.png "Скриншот браузера с проверкой работы Jolokia agent") \
+*Скриншот браузера с проверкой работы Jolokia agent*
+
+## Настройка Telegraf и Grafana под jolokia
+
+Добавим блок конфигурации для jolokia в файл конфигурации **Telegraf** по адресу `/etc/telegraf/telegraf.conf`.
+
+```ini
+[[inputs.jolokia2_agent]]
+urls = ["http://localhost:8080/jolokia"]
+
+[[inputs.jolokia2_agent.metric]]
+name  = "java_runtime"
+mbean = "java.lang:type=Runtime"
+paths = ["Uptime"]
+
+[[inputs.jolokia2_agent.metric]]
+name  = "java_memory"
+mbean = "java.lang:type=Memory"
+paths = ["HeapMemoryUsage", "NonHeapMemoryUsage", "ObjectPendingFinalizationCount"]
+
+[[inputs.jolokia2_agent.metric]]
+name     = "java_garbage_collector"
+mbean    = "java.lang:name=*,type=GarbageCollector"
+paths    = ["CollectionTime", "CollectionCount"]
+tag_keys = ["name"]
+
+[[inputs.jolokia2_agent.metric]]
+name  = "java_last_garbage_collection"
+mbean = "java.lang:name=*,type=GarbageCollector"
+paths = ["LastGcInfo"]
+tag_keys = ["name"]
+
+[[inputs.jolokia2_agent.metric]]
+name  = "java_threading"
+mbean = "java.lang:type=Threading"
+paths = ["TotalStartedThreadCount", "ThreadCount", "DaemonThreadCount", "PeakThreadCount"]
+
+[[inputs.jolokia2_agent.metric]]
+name  = "java_class_loading"
+mbean = "java.lang:type=ClassLoading"
+paths = ["LoadedClassCount", "UnloadedClassCount", "TotalLoadedClassCount"]
+
+[[inputs.jolokia2_agent.metric]]
+name     = "java_memory_pool"
+mbean    = "java.lang:name=*,type=MemoryPool"
+paths    = ["Usage", "PeakUsage", "CollectionUsage"]
+tag_keys = ["name"]
+```
+
+С помощью команды `sudo systemctl restart telegraf.service` перезапустим сервис с новыми настройками.
+
+В **Grafana** добавим новый дашборд <https://grafana.com/grafana/dashboards/8991-jvm-metrics-jolokia-2/> для просмотра метрик JVM.
+
+![part_2_7](images/part_2_7.png "Скриншот визуализации метрик JVM в Grafana") \
+*Скриншот визуализации метрик JVM в Grafana*
+
+С помощью **Jolokia Agent** и **Telegraf** можно получить следующие метрики JVM и Garbage Collector (GC):
+
+**JVM метрики:**
+
+* `jvm.uptime` — время работы JVM;
+* `jvm.start_time` — время запуска JVM;
+* `jvm.version` — версия JVM;
+* `jvm.name` — название JVM;
+* `jvm.vendor` — поставщик JVM;
+* `jvm.threads.count` — количество потоков в JVM;
+* `jvm.threads.peak_count` — максимальное количество потоков, которое было в JVM;
+* `jvm.memory.heap.init` — начальный размер кучи;
+* `jvm.memory.heap.used` — используемый размер кучи;
+* `jvm.memory.heap.committed` — подтверждённый размер кучи;
+* `jvm.memory.heap.max` — максимальный размер кучи;
+* `jvm.memory.non_heap.init` — начальный размер некучевых данных;
+* `jvm.memory.non_heap.used` — используемый размер некучевых данных;
+* `jvm.memory.non_heap.committed` — подтверждённый размер некучевых данных;
+* `jvm.memory.non_heap.max` — максимальный размер некучевых данных.
+
+**GC метрики:**
+
+* `gc.collection_count` — количество коллекций GC;
+* `gc.collection_time` — время, затраченное на коллекции GC;
+* `gc.memory.used` — объём памяти, используемый после сбора мусора;
+* `gc.memory.allocated` — объём выделенной памяти;
+* `gc.memory.wasted` — объём потерянной памяти (неиспользуемая память между коллекциями).
 
 Полезные ссылки:
 
-[Java HotSpot VM Options](https://www.oracle.com/java/technologies/javase/vmoptions-jsp.html) \
-[Ускорение Spring REST API на 200%](https://habr.com/ru/companies/maxilect/articles/896240/)
+[Валидация данных в Spring Boot](https://struchkov.dev/blog/ru/spring-boot-validation/) \
+[Jolokia2 Agent Input Plugin](https://github.com/influxdata/telegraf/blob/master/plugins/inputs/jolokia2_agent/README.md) \
+[java.conf](https://github.com/influxdata/telegraf/blob/master/plugins/inputs/jolokia2_agent/examples/java.conf)
